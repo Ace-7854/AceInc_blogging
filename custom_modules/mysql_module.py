@@ -6,6 +6,8 @@ class MySQLManager:
     def __init__(self):
         self.config = get_sql_config
 
+
+    #region create tables
     def __define_posts(self):
         query = """CREATE TABLE posts_tbl(
         blog_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
@@ -58,6 +60,8 @@ class MySQLManager:
         content TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )"""
+
+    #endregion
 
     # region db commands
     def connect(self):
