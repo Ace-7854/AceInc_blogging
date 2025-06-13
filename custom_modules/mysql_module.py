@@ -7,10 +7,14 @@ class MySQLManager:
         self.config = get_sql_config
 
 
+
     def create_required_tbls(self):
         tables = self.__fetch_query__("SHOW TABLES;")
 
-        if tables:
+        print(tables)
+
+
+        if tables is not None:
             posts = False 
             users = False
             cat = False
