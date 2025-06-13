@@ -7,6 +7,45 @@ class MySQLManager:
         self.config = get_sql_config
 
 
+    def create_required_tbls(self):
+        tables = self.__fetch_query__("SHOW TABLES;")
+
+        if tables:
+            posts = False 
+            users = False
+            cat = False
+            pos_cat = False
+            comments = False
+
+            for table in tables:
+                if table['Tables_in_db_blog'].lower() == "posts_tbl":
+                    posts = True
+                if table['Tables_in_db_blog'].lower() == "user_tbl":
+                    users = True
+                if table['Tables_in_db_blog'].lower() == "catagory_tbl":
+                    cat = True
+                if table['Tables_in_db_blog'].lower() == "post_cat_tbl":
+                    pos_cat = True
+                if table['Tables_in_db_blog'].lower() == "comments_tbl":
+                    comments = True
+                
+            if not posts:
+                self.__define_posts()
+            if not users:
+                self.__define_users()
+            if not cat:
+                self.__define_catagories()
+            if not pos_cat:
+                self.__define_post_cat()
+            if not comments:
+                self.__define_comments()
+        else:
+            self.__define_posts()
+            self.__define_users()
+            self.__define_catagories()
+            self.__define_comments()
+            self.__define_post_cat()
+
     #region create tables
     def __define_posts(self):
         query = """CREATE TABLE posts_tbl(
