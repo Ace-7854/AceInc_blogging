@@ -6,12 +6,57 @@ class MySQLManager:
     def __init__(self):
         self.config = get_sql_config
 
-    def __define_blog(self):
+    def __define_posts(self):
         query = """CREATE TABLE posts_tbl(
         blog_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
-        author_id INT NOT_NULL,
+        user_id INT NOT_NULL,
         title VARCHAR(80),
-        description TEXT
+        slug VARCHAR(80),
+        content TEXT,
+        status ENUM('draft', 'published', 'archived'),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FORIEGN KEY (user_id) REFERENCES user_tbl(user_id)
+        )"""
+
+        self.__execute_query__(query)
+
+    def __define_users(self):
+        query = """CREATE TABLE user_tbl (
+        user_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
+        username VARCHAR(50),
+        email VARCHAR(100),
+        password VARCHAR(255),
+        role ENUM('reader', 'author', 'admin') DEFAULT 'reader',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )"""
+
+        self.__execute_query__(query)
+
+    def __define_catagories(self):
+        query = """CREATE TABLE catagory_tbl (
+        catagory_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY, 
+        cat_name VARCHAR(75),
+        slug VARCHAR(75)
+        )"""
+
+        self.__execute_query__(query)
+
+    def __define_post_cat(self):
+        query = """CREATE TABLE post_cat_tbl (
+        post_id INT NOT NULL,
+        catagory_id INT NOT NULL,
+        FORIEGN KEY (post_id) REFERENCES post_tbl(post_id),
+        FORIEGN KEY (catagory_id) REFERENCES catagory_tbl(catagory_id)
+        )"""
+
+    def __define_comments():
+        query = """CREATE TABLE comments_tbl(
+        comment_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
+        post_id INT,
+        user_id INT,
+        username VARCHAR(50),
+        content TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )"""
 
     # region db commands
