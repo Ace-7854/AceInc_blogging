@@ -76,7 +76,29 @@ def register():
 
 @app.route('/email_confirmation')
 def email_confirmation():
-    pass
+    from custom_modules.email_module import EmailManager
+    mail = EmailManager()
+    try:
+        code = mail.send_confirmation(session['user']['email'])
+    except Exception as e:
+        print("Confirmation email failed to send")
+        return redirect(url_for('logout'))
+
+    if request.method == 'POST':
+        usr_code = int(request.form['code'])
+        if usr_code != code:
+            return "INVALID CODE GIVEN"
+        
+        from custom_modules.mysql_module import MySQLManager
+        db = MySQLManager()
+        db.connect()
+        user = session['user']
+        db.insert_new_user(user['username'], user['email'], user['pwrd'])
+        db.disconnect()
+
+        return "GO TO LOGIN PAGE AND LOG IN USING THE GIVEN CREDENTIALS" 
+
+    return render_template('email_confirmation.html')
 
 # @app.route('/blog_page/<title:str>')
 # def blog_page(title, id):
