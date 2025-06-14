@@ -1,0 +1,30 @@
+{% extends 'base.html'%}
+
+{% title block %} Register {% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <h3 class="text-center mb-4">Register here</h3>
+    <form method="POST" action="/register">
+        <!-- Username Input box -->
+        <label for="username"><strong>Username</strong></label>
+        <input type="text" class="form-control" id="username" name="username" required>
+        
+        <!-- Email Input box -->
+        <label for="email"><strong>Email</strong></label>
+        <input type="email" class="form-control" id="email" name="email" required>
+
+        <!-- Password -->
+        <label for="password"><strong>Password</strong></label>
+        <input type="password" class="form-control" id="password" name="password" required>
+
+        <!-- re-enter password -->
+        <label for="re-password"><strong>Re-enter Password</strong></label>
+        <input type="password" class="form-control" id="re-password" name="re-password" required>
+
+        <button type="submit" class="btn btn-primary w-100">Submit</button>
+    </form>
+</div>
+
+
+{% endblock %}
