@@ -67,12 +67,16 @@ def register():
             'email' : email,
             'pwrd' : pwrd
         }
-        return redirect(url_for('logout'))
+        return redirect(url_for('email_confirmation'))
 
 
     return render_template(
         'register.html'
     )
+
+@app.route('/email_confirmation')
+def email_confirmation():
+    pass
 
 # @app.route('/blog_page/<title:str>')
 # def blog_page(title, id):

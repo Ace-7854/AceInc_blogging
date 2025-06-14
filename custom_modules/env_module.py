@@ -12,3 +12,11 @@ def get_sql_config() -> dict:
     }
 
     return config
+
+def get_email():
+    load_dotenv()
+    return environ['google_email']
+
+def get_pwrd():
+    load_dotenv()
+    return environ['google_app_pwrd']
