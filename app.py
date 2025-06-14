@@ -10,26 +10,42 @@ def home():
 @app.route('/login')
 def login():
     if request.method == 'POST':
-        pass
+        username = request.form['username']
+        pwrd = request.form['password']
+
+        from custom_modules.mysql_module import MySQLManager
+
+        db = MySQLManager()
+        db.connect()
+
+        
+
+        db.disconnect()
 
     return render_template(
         'login.html'
     )
 
-@app.route('register')
-def register():
-    if request.method == 'POST':
-        pass
+@app.route('/logout')
+def logout():
+    session.pop('user')
+    return redirect(url_for('login'))
 
-    return render_template(
-        'register.html'
-    )
+# @app.route('register')
+# def register():
+#     if request.method == 'POST':
+#         pass
+
+#     return render_template(
+#         'register.html'
+#     )
 
 
-app.route('/blog_page')
-def blog_page():
-    if session['user'] not in session:
-        redirect(url_for('logout'))
+# app.route('/blog_page')
+# def blog_page():
+#     if session['user'] not in session:
+#         redirect(url_for('logout'))
 
 
-    
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
