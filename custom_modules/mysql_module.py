@@ -49,6 +49,21 @@ class MySQLManager:
             self.__define_comments()
             self.__define_post_cat()
 
+    #region user cmds
+    def get_user_by_username(self, username:str) -> dict:
+        query = """SELECT * FROM user_tbl WHERE username = %s"""
+
+        params = (username,)
+        return self.__fetch_query__(query, params)
+
+    def get_user_by_email(self, emails:str) -> dict:
+        query = "SELECT * FROM user_tbl WHERE email = %s"
+
+        params = (emails,)
+        return self.__fetch_query__(query, params)
+
+    #endregion
+
     #region create tables
     def __define_posts(self):
         query = """CREATE TABLE posts_tbl(
