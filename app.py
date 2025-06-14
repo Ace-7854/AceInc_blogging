@@ -18,9 +18,29 @@ def login():
         db = MySQLManager()
         db.connect()
 
-        
-
+        from custom_modules.utils import is_valid_email
+        if is_valid_email(username):
+            user = db.get_user_by_email(username)
+            if user is None:
+                return "Unregistered email given, please double check the email given or register"
+            else:
+                session['user'] = user
+        else:
+            user = db.get_user_by_username(username)
+            if user is None:
+                return "Unregistered username given, please double check the username given or register"
+            else:
+                session['user'] = user
         db.disconnect()
+
+        from custom_modules.security_module import check_pass
+        if check_pass(session['user']['password'], pwrd):
+            session['user']['password'] = None
+            return redirect(url_for('blog_page'))
+        else:
+            return "Incorrect password given"
+
+               
 
     return render_template(
         'login.html'
@@ -31,20 +51,19 @@ def logout():
     session.pop('user')
     return redirect(url_for('login'))
 
-# @app.route('register')
-# def register():
-#     if request.method == 'POST':
-#         pass
+@app.route('/register')
+def register():
+    if request.method == 'POST':
+        pass
 
-#     return render_template(
-#         'register.html'
-#     )
+    return render_template(
+        'register.html'
+    )
 
-
-# app.route('/blog_page')
-# def blog_page():
-#     if session['user'] not in session:
-#         redirect(url_for('logout'))
+app.route('/blog_page')
+def blog_page():
+    if session['user'] not in session:
+        redirect(url_for('logout'))
 
 
 if __name__ == '__main__':

@@ -61,6 +61,14 @@ class MySQLManager:
 
         params = (emails,)
         return self.__fetch_query__(query, params)
+    
+    def insert_new_user(self, username:str, email:str, password:str):
+        query = "INSERT INTO user_tbl(username, email, password) VALUES (%s, %s, %s)"
+
+        from custom_modules.security_module import hash_alg
+        params = (username, email, hash_alg(password))
+
+        return self.__execute_query__(query, params)
 
     #endregion
 
