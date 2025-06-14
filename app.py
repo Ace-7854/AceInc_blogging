@@ -7,7 +7,7 @@ app.secret_key = 'your_secret_key'
 def home():
     return redirect(url_for('login'))
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -21,6 +21,7 @@ def login():
         from custom_modules.utils import is_valid_email
         if is_valid_email(username):
             user = db.get_user_by_email(username)
+            print(user)
             if user is None:
                 return "Unregistered email given, please double check the email given or register"
             else:
@@ -40,8 +41,6 @@ def login():
         else:
             return "Incorrect password given"
 
-               
-
     return render_template(
         'login.html'
     )
@@ -51,7 +50,7 @@ def logout():
     session.pop('user')
     return redirect(url_for('login'))
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username=request.form['username']
@@ -67,6 +66,12 @@ def register():
             'email' : email,
             'pwrd' : pwrd
         }
+
+        
+        from custom_modules.email_module import EmailManager
+        mail = EmailManager()
+        session['code'] = mail.send_confirmation(session['user']['email'])
+
         return redirect(url_for('email_confirmation'))
 
 
@@ -74,21 +79,15 @@ def register():
         'register.html'
     )
 
-@app.route('/email_confirmation')
+@app.route('/email_confirmation', methods=['GET', 'POST'])
 def email_confirmation():
-    from custom_modules.email_module import EmailManager
-    mail = EmailManager()
-    try:
-        code = mail.send_confirmation(session['user']['email'])
-    except Exception as e:
-        print("Confirmation email failed to send")
-        return redirect(url_for('logout'))
-
     if request.method == 'POST':
         usr_code = int(request.form['code'])
-        if usr_code != code:
+        if usr_code != session['code']:
             return "INVALID CODE GIVEN"
         
+        # print(f"Given code:{session['code']}\n Code retrieved:{usr_code}")
+
         from custom_modules.mysql_module import MySQLManager
         db = MySQLManager()
         db.connect()

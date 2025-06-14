@@ -1,1 +1,15 @@
 <!-- Confrim a registered email by sending a code via email, and request its input when registered -->
+{% extends 'base.html'%}
+
+{% block title %}Confirmation | AceInc{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <form method="post">
+        <label for="confirmation code"><strong>Confirmation Code</strong></label>
+        <input type="text" class="form-control" id="code" name="code" required>
+
+        <button type="submit" class="btn btn-primary mb-4">Submit</button>
+    </form>
+</div>
+{% endblock %}

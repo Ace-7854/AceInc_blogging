@@ -54,13 +54,13 @@ class MySQLManager:
         query = """SELECT * FROM user_tbl WHERE username = %s"""
 
         params = (username,)
-        return self.__fetch_query__(query, params)
+        return self.__fetch_query__(query, params)[0]
 
     def get_user_by_email(self, emails:str) -> dict:
         query = "SELECT * FROM user_tbl WHERE email = %s"
 
         params = (emails,)
-        return self.__fetch_query__(query, params)
+        return self.__fetch_query__(query, params)[0]
     
     def insert_new_user(self, username:str, email:str, password:str):
         query = "INSERT INTO user_tbl(username, email, password) VALUES (%s, %s, %s)"
