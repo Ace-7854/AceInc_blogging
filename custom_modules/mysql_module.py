@@ -1,18 +1,17 @@
 import mysql.connector
 from mysql.connector import Error
-from env_module import get_sql_config
 
 class MySQLManager:
     def __init__(self):
-        self.config = get_sql_config
+        from custom_modules.env_module import get_sql_config
+        self.config = get_sql_config()
 
 
+    def get_db_tbl(self) -> dict:
+        return self.__fetch_query__("SHOW TABLES;")
 
     def create_required_tbls(self):
-        tables = self.__fetch_query__("SHOW TABLES;")
-
-        print(tables)
-
+        tables = self.get_db_tbl()
 
         if tables is not None:
             posts = False 
@@ -53,14 +52,14 @@ class MySQLManager:
     #region create tables
     def __define_posts(self):
         query = """CREATE TABLE posts_tbl(
-        blog_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
-        user_id INT NOT_NULL,
+        post_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
+        user_id INT NOT NULL,
         title VARCHAR(80),
         slug VARCHAR(80),
         content TEXT,
         status ENUM('draft', 'published', 'archived'),
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FORIEGN KEY (user_id) REFERENCES user_tbl(user_id)
+        FOREIGN KEY (user_id) REFERENCES user_tbl(user_id)
         )"""
 
         self.__execute_query__(query)
@@ -90,19 +89,32 @@ class MySQLManager:
         query = """CREATE TABLE post_cat_tbl (
         post_id INT NOT NULL,
         catagory_id INT NOT NULL,
-        FORIEGN KEY (post_id) REFERENCES post_tbl(post_id),
-        FORIEGN KEY (catagory_id) REFERENCES catagory_tbl(catagory_id)
+        FOREIGN KEY (post_id) REFERENCES posts_tbl(post_id),
+        FOREIGN KEY (catagory_id) REFERENCES catagory_tbl(catagory_id)
         )"""
 
-    def __define_comments():
+        self.__execute_query__(query)
+
+    def __define_comments(self):
         query = """CREATE TABLE comments_tbl(
         comment_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
         post_id INT,
         user_id INT,
         username VARCHAR(50),
         content TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES user_tbl(user_id)
         )"""
+
+        self.__execute_query__(query)
+
+    #endregion
+
+    #region drop cmds
+
+    def drop_tbl(self, table:str):
+        self.__execute_query__(f"DROP TABLE {table};")
+
 
     #endregion
 
