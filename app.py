@@ -60,10 +60,34 @@ def register():
         'register.html'
     )
 
-app.route('/blog_page')
-def blog_page():
+@app.route('/blog_page/<title:str>')
+def blog_page(title, id):
     if session['user'] not in session:
         redirect(url_for('logout'))
+
+
+    return render_template('blog_page.html')
+
+@app.route('/blog_catagories')
+def blog_cat():
+    if session['user'] not in session:
+        redirect(url_for('logout'))
+
+    return render_template('blog_catagories.html')
+
+@app.route('/profile_page/<username:str>')
+def profile(username:str, id:int):
+    if 'user' not in session:
+        redirect(url_for('logout'))
+
+    return render_template('profile_page.html')
+
+@app.route('/blogs/<catagory:str>')
+def blogs(catagory:str, id:int):
+    if 'user' not in session:
+        redirect(url_for('logout'))
+
+    return render_template('list_blogs_cat.html')
 
 
 if __name__ == '__main__':
