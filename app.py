@@ -36,7 +36,7 @@ def login():
         from custom_modules.security_module import check_pass
         if check_pass(session['user']['password'], pwrd):
             session['user']['password'] = None
-            return redirect(url_for('blog_page'))
+            return redirect(url_for('blog_catagories'))
         else:
             return "Incorrect password given"
 
@@ -61,6 +61,13 @@ def register():
 
         if pwrd != re_pwrd:
             return "Passwords do not match!"
+
+        session['user'] = {
+            'username' : username,
+            'email' : email,
+            'pwrd' : pwrd
+        }
+        return redirect(url_for('logout'))
 
 
     return render_template(
