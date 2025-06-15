@@ -19,6 +19,11 @@ def main():
     # make_tbls(db)
     # remove_all_tbls(db)
 
+    # db.insert_new_catagory("Personal Projects", "This catagory is for all of my developed and finalised software with an explanation as to how and why it functions")
+    # db.insert_new_catagory("Life Updates", "This catagory is updates to my life like major events or changes")
+    # db.insert_new_catagory("The Info Abyss", "This catagory is for random things that I end up dumping on the platform")
+    # db.insert_new_catagory("Current Projects", "This area is for unfinished and being worked on projects")
+
     db.disconnect()
 
 if __name__ == "__main__":

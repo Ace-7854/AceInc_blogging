@@ -21,7 +21,6 @@ def login():
         from custom_modules.utils import is_valid_email
         if is_valid_email(username):
             user = db.get_user_by_email(username)
-            print(user)
             if user is None:
                 return "Unregistered email given, please double check the email given or register"
             else:
@@ -120,7 +119,7 @@ def blog_catagories():
 
     return render_template(
         'blog_catagories.html',
-        catagories = cat
+        categories = cat
     )
 
 # @app.route('/profile_page/<username:str>')
