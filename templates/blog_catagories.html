@@ -4,6 +4,9 @@
 
 {% block content %}
 <div class="container mt-5">
+    {% if session['user']['role'] != 'reader' %}
+    <a href="#" class="btn btn-primary mb-4">Add New Category</a>
+    {% endif %}
     <div class="row justify-content-center">
         {% for cat in categories %}
         <div class="col-md-6 col-lg-4 d-flex">
