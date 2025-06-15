@@ -1,1 +1,20 @@
 <!-- BLOG CATAGORIES IS A DASHBOARD FOR ALL THE DIFFERENT CATAGORIES MADE -->
+{% extends 'base.html' %}
+
+{% title block %} Catagories | AceInc{% endblock %}
+
+{% content block %}
+
+{% for cat in catagories %}
+
+<div class="card cat-card">
+    <div class="card-body">
+        <h5 class="card-title">{% cat['title'] %}</h5>
+        <p class="card-text">{% cat['description'] %}</p>
+        <a href="#" class="btn btn-primary mb-4">See blogs for catagory</a>
+    </div>
+</div>
+
+{% endfor %}
+
+{% endblock %}

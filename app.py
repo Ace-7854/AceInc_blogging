@@ -109,12 +109,19 @@ def email_confirmation():
 
 @app.route('/blog_catagories')
 def blog_catagories():
-    if session['user'] not in session:
+    if 'user' not in session:
         redirect(url_for('logout'))
-    
 
+    from custom_modules.mysql_module import MySQLManager
+    db = MySQLManager()
+    db.connect()    
+    cat = db.get_catagories()
+    db.disconnect()
 
-    return render_template('blog_catagories.html')
+    return render_template(
+        'blog_catagories.html',
+        catagories = cat
+    )
 
 # @app.route('/profile_page/<username:str>')
 # def profile(username:str, id:int):

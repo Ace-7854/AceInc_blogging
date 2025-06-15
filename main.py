@@ -16,7 +16,7 @@ def main():
     db = MySQLManager()
     db.connect()
 
-    make_tbls(db)
+    # make_tbls(db)
     # remove_all_tbls(db)
 
     db.disconnect()

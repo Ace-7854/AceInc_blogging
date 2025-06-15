@@ -29,3 +29,7 @@ body {
     border-radius: 15px;
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
 }
+
+.cat-card {
+    width: 18rem;
+}
