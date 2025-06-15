@@ -37,10 +37,10 @@ def login():
         from custom_modules.security_module import check_pass
         if check_pass(session['user']['password'], pwrd):
             session['user']['password'] = None
+            print(session['user'])
             return redirect(url_for('blog_catagories'))
         else:
             return "Incorrect password given"
-
     return render_template(
         'login.html'
     )
@@ -107,12 +107,14 @@ def email_confirmation():
 
 #     return render_template('blog_page.html')
 
-# @app.route('/blog_catagories')
-# def blog_cat():
-#     if session['user'] not in session:
-#         redirect(url_for('logout'))
+@app.route('/blog_catagories')
+def blog_catagories():
+    if session['user'] not in session:
+        redirect(url_for('logout'))
+    
 
-#     return render_template('blog_catagories.html')
+
+    return render_template('blog_catagories.html')
 
 # @app.route('/profile_page/<username:str>')
 # def profile(username:str, id:int):

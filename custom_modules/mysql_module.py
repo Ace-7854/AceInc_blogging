@@ -72,6 +72,22 @@ class MySQLManager:
 
     #endregion
 
+    #region catagories cmds
+
+    def get_catagories(self):
+        query = "SELECT * FROM catagory_tbl"
+
+        return self.__fetch_query__(query)
+    
+    def insert_new_catagory(self, title:str, description:str):
+        from custom_modules.utils import simple_slugify as slugify
+        query = "INSERT INTO catagory_tbl(cat_name, description, slug) VALUES(%s, %s, %s)"
+
+        params = (title, description, slugify(title))
+        self.__execute_query__(query, params)
+
+    #endregion
+
     #region create tables
     def __define_posts(self):
         query = """CREATE TABLE posts_tbl(
@@ -103,6 +119,7 @@ class MySQLManager:
         query = """CREATE TABLE catagory_tbl (
         catagory_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY, 
         cat_name VARCHAR(75),
+        description TEXT,
         slug VARCHAR(75)
         )"""
 
