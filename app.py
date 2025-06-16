@@ -98,13 +98,13 @@ def email_confirmation():
 
     return render_template('email_confirmation.html')
 
-# @app.route('/blog_page/<title:str>')
-# def blog_page(title, id):
-#     if session['user'] not in session:
-#         redirect(url_for('logout'))
+@app.route('/view_blog/<string:title>')
+def view_blog(title:str):
+    if 'user' not in session:
+        redirect(url_for('logout'))
 
 
-#     return render_template('blog_page.html')
+    return render_template('view_blog.html')
 
 @app.route('/blog_catagories')
 def blog_catagories():
@@ -123,18 +123,39 @@ def blog_catagories():
     )
 
 # @app.route('/profile_page/<username:str>')
-# def profile(username:str, id:int):
+# def profile(username:str):
 #     if 'user' not in session:
-#         redirect(url_for('logout'))
+#         return redirect(url_for('logout'))
+
+    
 
 #     return render_template('profile_page.html')
 
-# @app.route('/blogs/<catagory:str>')
-# def blogs(catagory:str, id:int):
-#     if 'user' not in session:
-#         redirect(url_for('logout'))
+@app.route('/blogs/<string:slug>')
+def blogs(slug:str):
+    if 'user' not in session:
+        return redirect(url_for('logout'))
 
-#     return render_template('list_blogs_cat.html')
+    from custom_modules.mysql_module import MySQLManager
+    db = MySQLManager()
+    db.connect()
+    cat = db.get_cat_by_slug(slug)
+    print(cat)
+    posts = db.get_all_posts_by_cat(cat['catagory_id'])
+    print(posts)
+
+    lst_of_psts = []
+    for post in posts:
+        temp_p = db.get_post_by_id(post['post_id'])
+        lst_of_psts.append(temp_p)
+
+    db.disconnect()
+
+    return render_template(
+        'list_blogs_cat.html',
+        cata = cat,
+        psts = lst_of_psts
+    )
 
 
 if __name__ == '__main__':

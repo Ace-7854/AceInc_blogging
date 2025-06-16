@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    {% if session['user']['role'] != 'reader' %}
+    {% if session['user']['role'] == 'admin' %}
     <a href="#" class="btn btn-primary mb-4">Add New Category</a>
     {% endif %}
     <div class="row justify-content-center">
@@ -14,7 +14,9 @@
                 <div class="card-body">
                     <h5 class="card-title"><strong>{{ cat['cat_name'] }}</strong></h5>
                     <p class="card-text">{{ cat['description'] }}</p>
-                    <a href="#" class="btn btn-primary">See blogs for category</a>
+                    <a href="{{ url_for('blogs', slug=cat['slug']) }}" class="btn btn-primary">
+                        See blogs for category
+                    </a>
                 </div>
             </div>
         </div>

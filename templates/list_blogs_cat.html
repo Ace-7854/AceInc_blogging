@@ -1,1 +1,38 @@
-<!-- A LIST OF READY TO READ BLOGS BASED ON A SELECTED CATAGORY -->
+<!-- A LIST OF READY TO READ BLOGS BASED ON A SELECTED CATEGORY -->
+{% extends 'base.html' %}
+
+{% block title %} {{ cata['cat_name'] }} | AceInc {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Blogs in "{{ cata['cat_name'] }}"</h2>
+        {% if session['user']['role'] != 'reader' %}
+        <a href="#" class="btn btn-primary mb-4">Make New Blog</a>
+        {% endif %}
+
+    {% if psts %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for post in psts %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post['title'] }}</h5>
+                            <p class="card-text text-muted">
+                                {{ post['summary'] if post['summary'] else post['content'][:150] ~ '...' }}
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Post ID: {{ post['post_id'] }}</small>
+                            <a href="{{ url_for('view_blog', title=post['title']) }}" class="btn btn-outline-primary btn-sm">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning mt-4 text-center">
+            No blogs found in this category yet. Check back later!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

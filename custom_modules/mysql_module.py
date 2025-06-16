@@ -86,6 +86,50 @@ class MySQLManager:
         params = (title, description, slugify(title))
         self.__execute_query__(query, params)
 
+    def get_cat_by_slug(self, slug:str) -> dict:
+        query = "SELECT * FROM catagory_tbl WHERE slug = %s"
+
+        params = (slug, )
+        return self.__fetch_query__(query, params)[0]        
+
+    #endregion
+
+    #region posts
+    def insert_new_post(self, id:str|int, title:str, content:str) -> None:
+        query = "INSERT INTO posts_tbl(user_id, title, slug, content) VALUES(%s, %s, %s, %s)"
+
+        from custom_modules.utils import simple_slugify as slug
+        params = (id, title, slug(title), content)
+
+        self.__execute_query__(query, params)
+    
+    def get_post_by_id(self, id:int|str) -> dict:
+        query = "SELECT * FROM posts_tbl WHERE post_id = %s"
+
+        params = (id, )
+        return self.__fetch_query__(query, params)[0]
+    
+    def get_post_by_title(self, title:str) -> dict:
+        query = "SELECT post_id FROM posts_tbl WHERE title = %s"
+
+        params = (title, )
+        return self.__fetch_query__(query, params)[0]
+
+    #endregion
+
+    #region post cat
+    def insert_link_cat_post(self, cat:str|int, post:str|int):
+        query = "INSERT INTO post_cat_tbl(post_id, catagory_id) VALUES(%s, %s)"
+
+        params = (post, cat)
+        self.__execute_query__(query, params)
+
+    def get_all_posts_by_cat(self, cat_id:str|int) -> list:
+        query = "SELECT post_id FROM post_cat_tbl WHERE catagory_id = %s"
+
+        params = (cat_id, )
+        return self.__fetch_query__(query, params)
+
     #endregion
 
     #region create tables
@@ -96,7 +140,7 @@ class MySQLManager:
         title VARCHAR(80),
         slug VARCHAR(80),
         content TEXT,
-        status ENUM('draft', 'published', 'archived'),
+        status ENUM('draft', 'published', 'archived') DEFAULT 'published',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES user_tbl(user_id)
         )"""
@@ -143,7 +187,8 @@ class MySQLManager:
         username VARCHAR(50),
         content TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES user_tbl(user_id)
+        FOREIGN KEY (user_id) REFERENCES user_tbl(user_id),
+        FOREIGN KEY (post_id) REFERENCES posts_tbl(post_id)
         )"""
 
         self.__execute_query__(query)
