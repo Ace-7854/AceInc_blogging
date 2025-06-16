@@ -114,6 +114,18 @@ class MySQLManager:
 
         params = (title, )
         return self.__fetch_query__(query, params)[0]
+    
+    def get_post_by_slug(self, slug:str) -> dict:
+        query = "SELECT * FROM posts_tbl WHERE slug = %s"
+
+        params = (slug, )
+        return self.__fetch_query__(query, params)[0]
+    
+    def get_post_slug_by_id(self, id:str|int) -> str:
+        query = "SELECT slug FROM posts_tbl WHERE post_id = %s"
+
+        params = (id, )
+        return self.__fetch_query__(query, params)[0]['slug']
 
     #endregion
 
@@ -129,6 +141,22 @@ class MySQLManager:
 
         params = (cat_id, )
         return self.__fetch_query__(query, params)
+
+    #endregion
+
+    #region comments
+
+    def get_comments_by_post(self,id:str|int) -> list[dict]:
+        query = "SELECT * FROM comments_tbl WHERE post_id = %s"
+
+        params = (id,)
+        return self.__fetch_query__(query, params)
+
+    def insert_new_comment(self, post_id:str|int, user_id:str|int, username:str, content:str) -> None:
+        query = "INSERT INTO comments_tbl(post_id, user_id, username, content) VALUES(%s, %s, %s, %s)"
+
+        params = (post_id, user_id, username, content)
+        self.__execute_query__(query, params)
 
     #endregion
 

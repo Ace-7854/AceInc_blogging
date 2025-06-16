@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -98,13 +98,54 @@ def email_confirmation():
 
     return render_template('email_confirmation.html')
 
-@app.route('/view_blog/<string:title>')
-def view_blog(title:str):
+@app.route('/view_blog/<string:slug>')
+def view_blog(slug:str):
     if 'user' not in session:
         redirect(url_for('logout'))
 
+    from custom_modules.mysql_module import MySQLManager
+    db = MySQLManager()
+    db.connect()
+    post = db.get_post_by_slug(slug)
+    comments = db.get_comments_by_post(post['post_id'])
+    db.disconnect()
 
-    return render_template('view_blog.html')
+    return render_template(
+        'view_blog.html',
+        post = post,
+        comments = comments
+    )
+@app.route('/submit_comment/<int:post_id>', methods=['POST'])
+def submit_comment(post_id):
+    if 'user' not in session:
+        return redirect(url_for('logout'))
+
+    from custom_modules.mysql_module import MySQLManager
+    db = MySQLManager()
+    db.connect()
+
+    # Get form data
+    username = request.form.get('username') or None
+    content = request.form.get('content')
+
+    # Get post slug for redirect (even if comment fails)
+    slug = db.get_post_slug_by_id(post_id)
+
+    if not content.strip():
+        flash("Comment cannot be empty.", "warning")
+        db.disconnect()
+        return redirect(url_for('view_blog', slug=slug))
+
+    try:
+        db.insert_new_comment(post_id, session['user']['user_id'], username, content)
+    except Exception as e:
+        print(f"❌ Error inserting comment: {e}")
+        flash("Something went wrong while posting your comment.", "danger")
+    finally:
+        db.disconnect()
+
+    flash("Your comment was posted successfully!", "success")
+    return redirect(url_for('view_blog', slug=slug))
 
 @app.route('/blog_catagories')
 def blog_catagories():
