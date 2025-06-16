@@ -58,7 +58,8 @@ def register():
         re_pwrd=request.form['re-password']
 
         if pwrd != re_pwrd:
-            return "Passwords do not match!"
+            flash('Passwords did not match', 'error')
+            return redirect(url_for('register'))
 
         session['user'] = {
             'username' : username,
@@ -83,9 +84,8 @@ def email_confirmation():
     if request.method == 'POST':
         usr_code = int(request.form['code'])
         if usr_code != session['code']:
-            return "INVALID CODE GIVEN"
-        
-        # print(f"Given code:{session['code']}\n Code retrieved:{usr_code}")
+            flash('Code was incorrect', 'error')
+            return redirect(url_for('email_confirmation'))
 
         from custom_modules.mysql_module import MySQLManager
         db = MySQLManager()
@@ -94,7 +94,8 @@ def email_confirmation():
         db.insert_new_user(user['username'], user['email'], user['pwrd'])
         db.disconnect()
 
-        return "GO TO LOGIN PAGE AND LOG IN USING THE GIVEN CREDENTIALS" 
+        flash('Account Successfully Made','success')
+        return redirect(url_for('logout'))
 
     return render_template('email_confirmation.html')
 
