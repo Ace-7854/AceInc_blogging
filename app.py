@@ -36,7 +36,7 @@ def login():
         from custom_modules.security_module import check_pass
         if check_pass(session['user']['password'], pwrd):
             session['user']['password'] = None
-            print(session['user'])
+            # print(session['user'])
             return redirect(url_for('blog_catagories'))
         else:
             return "Incorrect password given"
@@ -113,6 +113,26 @@ def new_cat():
 
     return render_template('new_cat.html')
 
+@app.route('/new_post/<int:cat_id>', methods=['POST','GET'])
+def new_post(cat_id:int):
+    if 'user' not in session:
+        return redirect(url_for('logout'))
+
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+
+        from custom_modules.mysql_module import MySQLManager
+        db = MySQLManager()
+        db.connect()
+        db.insert_new_post(session['user']['user_id'], title, content)
+        post = db.get_post_by_title(title)
+        db.insert_link_cat_post(cat_id, post['post_id'])
+        db.disconnect()
+        
+        return redirect(url_for('blog_catagories'))
+
+    return render_template('new_post.html')
 
 @app.route('/view_blog/<string:slug>')
 def view_blog(slug:str):
@@ -197,10 +217,9 @@ def blogs(slug:str):
     db = MySQLManager()
     db.connect()
     cat = db.get_cat_by_slug(slug)
-    print(cat)
+    # print(cat)
     posts = db.get_all_posts_by_cat(cat['catagory_id'])
-    print(posts)
-
+    # print(posts)
     lst_of_psts = []
     for post in posts:
         temp_p = db.get_post_by_id(post['post_id'])
