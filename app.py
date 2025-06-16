@@ -99,6 +99,21 @@ def email_confirmation():
 
     return render_template('email_confirmation.html')
 
+@app.route('/new_cat', methods= ['POST', 'GET'])
+def new_cat():
+    if request.method == "POST":
+        cat_name = request.form['cat_name']
+        desc = request.form['description']
+
+        from custom_modules.mysql_module import MySQLManager
+        db = MySQLManager()
+        db.connect()
+        db.insert_new_catagory(cat_name, desc)
+        db.disconnect()
+
+    return render_template('new_cat.html')
+
+
 @app.route('/view_blog/<string:slug>')
 def view_blog(slug:str):
     if 'user' not in session:
