@@ -4,7 +4,7 @@
 {% block title %} {{ cata['cat_name'] }} | AceInc {% endblock %}
 
 {% block content %}
-<div class="char-grad container my-5">
+<div class="container my-5">
     <h2 class="mb-4 text-center">Blogs in "{{ cata['cat_name'] }}"</h2>
         {% if session['user']['role'] != 'reader' %}
         <a href="{{ url_for('new_post', cat_id = cata['catagory_id']) }}" class="btn btn-primary mb-4">Make New Blog</a>
@@ -21,7 +21,7 @@
                                 {{ post['summary'] if post['summary'] else post['content'][:150] ~ '...' }}
                             </p>
                         </div>
-                        <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                        <div class="card-footer border-top-0 d-flex justify-content-between align-items-center">
                             <small class="text-muted">Post ID: {{ post['post_id'] }}</small>
                             <a href="{{ url_for('view_blog', slug=post['slug']) }}" class="btn btn-outline-primary btn-sm">Read More</a>
                         </div>

@@ -33,9 +33,9 @@
         {% if comments %}
             <ul class="list-group">
                 {% for comment in comments %}
-                    <li class="list-group-item">
+                    <li class="list-group-item comment-card">
                         <strong>{{ comment['username'] or "Anonymous" }}</strong>
-                        <span class="text-muted small float-end">
+                        <span class="small float-end">
                             {{ comment['created_at'].strftime('%Y-%m-%d %H:%M') if comment['created_at'] else "" }}
                         </span>
                         <p class="mb-1 mt-2">{{ comment['content'] }}</p>
