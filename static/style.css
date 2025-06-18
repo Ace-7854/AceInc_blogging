@@ -1,5 +1,7 @@
 body {
-    background: whitesmoke;
+    background-color: linear-gradient(135deg, #374151 0%, #4b5563 100%) !important;
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%) !important;
+
 }
 .login-container {
     max-width: 400px;
@@ -32,4 +34,16 @@ body {
 
 .cat-card {
     width: 18rem;
+    background: whitesmoke;
+}
+
+.char-grad{
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%) !important;
+    background-color: linear-gradient(135deg, #374151 0%, #4b5563 100%) !important;
+}
+.container {
+    background: transparent !important;
+}
+.my-5 {
+    background: transparent !important;
 }
