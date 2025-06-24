@@ -5,8 +5,9 @@
     <title>{% block title %}AceInc Blogging{% endblock %}</title>
     <!-- Bootstrap CDN CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Your custom CSS -->
+    <!-- Favourite Icon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <!-- custom CSS -->
     <link rel="stylesheet" href=" {{ url_for('static', filename='style.css') }}">
 
 </head>
@@ -14,7 +15,10 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">AceInc Blogging</a>
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{{ url_for('static', filename='images/favicon.png') }}" alt="Ace-Inc Logo" width="30" height="30" class="me-2">
+                Ace-Inc'
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -24,10 +28,8 @@
                         {% if session['user']['role'] == 'admin' %}
                         <li class="nav-item"><a href="#" class="nav-link">Admin Dashboard</a></li>
                         {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('blog_catagories') }}">Catagories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('blog_catagories') }}">Categories</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Log Out</a></li>
-                    <!-- <li class="nav-item"><a href="#" class="nav-link">--placeholder--</a></li> -->
-                    <!-- <li class="nav-item"><a href="#" class="nav-link">Profile</a></li> -->
                     {% elif 'user' not in session %}
                     <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">Log In</a></li>
                     {% endif %}
