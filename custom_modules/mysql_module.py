@@ -50,6 +50,35 @@ class MySQLManager:
             self.__define_post_cat()
 
     #region user cmds
+    def update_user(self, id:str|int, username:str=None, email:str=None, password:str=None, role:str=None):
+        query = "UPDATE user_tbl SET "
+        params = []
+
+        if username:
+            query += "username = %s, "
+            params.append(username)
+        if email:
+            query += "email = %s, "
+            params.append(email)
+        if password:
+            from custom_modules.security_module import hash_alg
+            query += "password = %s, "
+            params.append(hash_alg(password))
+        if role:
+            query += "role = %s, "
+            params.append(role)
+
+        query = query.rstrip(", ") + " WHERE user_id = %s"
+        params.append(id)
+
+        self.__execute_query__(query, tuple(params))
+
+    def get_user_by_id(self, id:int|str) -> dict:
+        query = """SELECT * FROM user_tbl WHERE user_id = %s"""
+
+        params = (id, )
+        return self.__fetch_query__(query, params)[0]
+
     def get_user_by_username(self, username:str) -> dict:
         query = """SELECT * FROM user_tbl WHERE username = %s"""
 
@@ -69,6 +98,11 @@ class MySQLManager:
         params = (username, email, hash_alg(password))
 
         return self.__execute_query__(query, params)
+    
+    def get_all_users(self) -> list[dict]:
+        query = "SELECT user_id, username, email, role, created_at FROM user_tbl"
+
+        return self.__fetch_query__(query)
 
     #endregion
 

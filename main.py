@@ -52,8 +52,7 @@ def main():
     # make_tbls(db)
     # remove_all_tbls(db)
     # make_cats(db)
-    make_mock_posts(db)
-
+    # make_mock_posts(db)
 
     db.disconnect()
 

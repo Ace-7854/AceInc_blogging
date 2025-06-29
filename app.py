@@ -233,6 +233,57 @@ def blogs(slug:str):
         psts = lst_of_psts
     )
 
+@app.route('/admin_dash')
+def admin_dash():
+    if 'user' not in session and session['user']['role'] != 'admin':
+        return redirect(url_for('logout'))
+
+    return render_template(
+        'admin_dash.html'
+    )
+
+@app.route('/user_viewer')
+def user_viewer():
+    if 'user' not in session or session['user']['role'] != 'admin':
+        return redirect(url_for('logout'))
+
+    from custom_modules.mysql_module import MySQLManager
+    db = MySQLManager()
+    db.connect()
+    users = db.get_all_users()
+    db.disconnect()
+
+    return render_template(
+        'user_viewer.html',
+        users=users
+    )
+
+@app.route('/edit_user/<int:id>', methods=['GET', 'POST'])
+def edit_user(id:int):
+    if 'user' not in session or session['user']['role'] != 'admin':
+        return redirect(url_for('logout'))
+
+    from custom_modules.mysql_module import MySQLManager
+    db = MySQLManager()
+    db.connect()
+
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        role = request.form['role']
+
+        db.update_user(id=id, username=username, email=email, role=role)
+        flash('User updated successfully', 'success')
+        return redirect(url_for('user_viewer'))
+
+    user = db.get_user_by_id(id)
+    db.disconnect()
+
+    return render_template(
+        'edit_user.html',
+        user=user
+    )
+
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000)

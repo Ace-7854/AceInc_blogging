@@ -8,18 +8,18 @@
 <!-- Admin dashboard -->
 
 <section class="page-section text-center">
-    <p><strong>Welcome {{user['username']}}</strong></p>
+    <p><strong>Welcome {{session['user']['username']}}</strong></p>
     <div class="container mt-4">
         <div class="row row-cols-1 row-cols-md-3 g-4">
 
             <div class="col">
-                <a href="#" class="text-decoration-none text-dark">
+                <a href="{{ url_for('user_viewer') }}" class="text-decoration-none text-dark">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title">User Management</h5>
                             <p class="card-text text-center">
-                                <li>View incoming orders</li>
-                                <li>Mark orders as "Preparing", "Ready" and "Completed"</li>
+                                <li>View Users</li>
+                                <li>Edit credentials</li>
                             </p>
                         </div>
                     </div>
@@ -30,111 +30,16 @@
                 <a href="#" class="text-decoration-none text-dark">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
-                            <h5 class="card-title">Customer Information</h5>
+                            <h5 class="card-title">Post Management</h5>
                             <p class="card-text text-center">
-                                <li>View customer details</li>
-                                <li>View past orders to assist with repeat customers</li>
+                                <li>View posts via Titles</li>
+                                <li>Edit status of post</li>
                             </p>
                         </div>
                     </div>
                 </a>
             </div>
 
-            <div class="col">
-                <a href="#" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Menu</h5>
-                            <p class="card-text text-center">
-                                <li>View current items and prices</li>
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            
-            <div class="col">
-                <a href="#" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Current Orders</h5>
-                            <p class="card-text text-center">
-                                <li>View current orders</li>
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col">
-                <a href="#" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm border border-danger">
-                        <div class="card-body">
-                            <h5 class="card-title">Force calls for testing</h5>
-                            <p class="card-text text-center">
-                                <li>Will Force A Call with given number</li>
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            
-               <div class="col">
-                <a href="#" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm border border-danger">
-                        <div class="card-body">
-                            <h5 class="card-title">Reports & Analytics</h5>
-                            <p class="card-text text-center">
-                                <li>Daily/weekly order summary</li>
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col">
-                <a href="#" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm border border-danger">
-                        <div class="card-body">
-                            <h5 class="card-title">Customer Management</h5>
-                            <p class="card-text text-center">
-                                <li>Edit customer profiles</li>
-                                <li>Customer flags</li>
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col">
-                <a href="#" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm border border-danger">
-                        <div class="card-body">
-                            <h5 class="card-title">Order Overrides</h5>
-                            <p class="card-text text-center">
-                                <li>Cancel Orders</li>
-                                <li>Adjust orders</li>
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col">
-                <a href="#" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm border border-danger">
-                        <div class="card-body">
-                            <h5 class="card-title">Log Viewer</h5>
-                            <p class="card-text text-center">
-                                <li>View audit trail of actions taken by any user</li>
-                                <li>Filter logs by user, time, or action</li>
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
 
 
 {% endblock %}

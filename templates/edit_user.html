@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %} Edit User | AceInc {% endblock %}
+
+{% block content %}
+
+<section class="page-section text-center">
+    <div class="container mt-5">
+        <h4 class="mb-4">Edit User</h4>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ user['username'] }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ user['email'] }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select class="form-select" id="role" name="role">
+                    <option value="reader" {% if user['role'] == 'reader' %}selected{% endif %}>Reader</option>
+                    <option value="author" {% if user['role'] == 'author' %}selected{% endif %}>Author</option>
+                    <option value="admin" {% if user['role'] == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update User</button>
+        </form>
+    </div>
+
+{% endblock %}
