@@ -219,7 +219,7 @@ class MySQLManager:
         email VARCHAR(100),
         password VARCHAR(255),
         role ENUM('reader', 'author', 'admin') DEFAULT 'reader',
-        flag ENUM('banned', 'warning', 'review') DEFAULT '',
+        flag ENUM('banned', 'warning', 'review', 'none') DEFAULT 'none',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )"""
 
