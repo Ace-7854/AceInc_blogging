@@ -214,6 +214,7 @@ def blogs(slug:str):
         return redirect(url_for('logout'))
 
     from custom_modules.mysql_module import MySQLManager
+    from custom_modules.utils import remove_html_tags
     db = MySQLManager()
     db.connect()
     cat = db.get_cat_by_slug(slug)
@@ -223,6 +224,7 @@ def blogs(slug:str):
     lst_of_psts = []
     for post in posts:
         temp_p = db.get_post_by_id(post['post_id'])
+        temp_p['summary'] = remove_html_tags(temp_p['content'][:150]) + '...'
         lst_of_psts.append(temp_p)
 
     db.disconnect()
