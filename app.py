@@ -271,8 +271,9 @@ def edit_user(id:int):
         username = request.form['username']
         email = request.form['email']
         role = request.form['role']
+        flag = request.form['flag']
 
-        db.update_user(id=id, username=username, email=email, role=role)
+        db.update_user(id=id, username=username, email=email, role=role, flag=flag)
         flash('User updated successfully', 'success')
         return redirect(url_for('user_viewer'))
 

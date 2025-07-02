@@ -25,6 +25,15 @@
                     <option value="admin" {% if user['role'] == 'admin' %}selected{% endif %}>Admin</option>
                 </select>
             </div>
+            <div class="mb-3">
+                <label for="flag" class="form-label">Flag</label>
+                <select class="form-select" id="flag" name="flag">
+                    <option value="none" {% if user['flag'] == 'none' %}selected{% endif %}>None</option>
+                    <option value="banned" {% if user['flag'] == 'banned' %}selected{% endif %}>Banned</option>
+                    <option value="warning" {% if user['flag'] == 'warning' %}selected{% endif %}>Warning</option>
+                    <option value="review" {% if user['flag'] == 'review' %}selected{% endif %}>Review</option>
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary">Update User</button>
         </form>
     </div>

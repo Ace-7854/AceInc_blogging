@@ -50,7 +50,7 @@ class MySQLManager:
             self.__define_post_cat()
 
     #region user cmds
-    def update_user(self, id:str|int, username:str=None, email:str=None, password:str=None, role:str=None):
+    def update_user(self, id:str|int, username:str=None, email:str=None, password:str=None, role:str=None, flag:str=None):
         query = "UPDATE user_tbl SET "
         params = []
 
@@ -67,6 +67,9 @@ class MySQLManager:
         if role:
             query += "role = %s, "
             params.append(role)
+        if flag:
+            query += "flag = %s, "
+            params.append(flag)
 
         query = query.rstrip(", ") + " WHERE user_id = %s"
         params.append(id)
@@ -80,13 +83,13 @@ class MySQLManager:
         return self.__fetch_query__(query, params)[0]
 
     def get_user_by_username(self, username:str) -> dict:
-        query = """SELECT * FROM user_tbl WHERE username = %s"""
+        query = """SELECT * FROM user_tbl WHERE username = %s AND flag != 'banned'"""
 
         params = (username,)
         return self.__fetch_query__(query, params)[0]
 
     def get_user_by_email(self, emails:str) -> dict:
-        query = "SELECT * FROM user_tbl WHERE email = %s"
+        query = "SELECT * FROM user_tbl WHERE email = %s AND flag != 'banned'"
 
         params = (emails,)
         return self.__fetch_query__(query, params)[0]
@@ -100,7 +103,7 @@ class MySQLManager:
         return self.__execute_query__(query, params)
     
     def get_all_users(self) -> list[dict]:
-        query = "SELECT user_id, username, email, role, created_at FROM user_tbl"
+        query = "SELECT user_id, username, email, role, flag,created_at FROM user_tbl"
 
         return self.__fetch_query__(query)
 
@@ -216,6 +219,7 @@ class MySQLManager:
         email VARCHAR(100),
         password VARCHAR(255),
         role ENUM('reader', 'author', 'admin') DEFAULT 'reader',
+        flag ENUM('banned', 'warning', 'review') DEFAULT '',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )"""
 
@@ -270,14 +274,14 @@ class MySQLManager:
         try:
             self.connection = mysql.connector.connect(**self.config)
             if self.connection.is_connected():
-                print("✅ Connected to MySQL database")
+                print("Connected to MySQL database")
         except Error as e:
-            print(f"❌ Error connecting to MySQL: {e}")
+            print(f"Error connecting to MySQL: {e}")
 
     def disconnect(self):
         if self.connection and self.connection.is_connected():
             self.connection.close()
-            print("🔌 MySQL connection closed")
+            print("MySQL connection closed")
 
     def __execute_query__(self, query, params=None):
         cursor = None
@@ -285,10 +289,10 @@ class MySQLManager:
             cursor = self.connection.cursor()
             cursor.execute(query, params)
             self.connection.commit()
-            print("✅ Query executed successfully")
+            print("Query executed successfully")
         except Error as e:
             self.connection.rollback()
-            print(f"❌ Error executing query: {e}")
+            print(f"Error executing query: {e}")
         finally:
             if cursor:
                 cursor.close()
@@ -300,7 +304,7 @@ class MySQLManager:
             cursor.execute(query, params)
             return cursor.fetchall()
         except Error as e:
-            print(f"❌ Error fetching data: {e}")
+            print(f"Error fetching data: {e}")
             return None
         finally:
             if cursor:
