@@ -29,6 +29,7 @@
                         <li class="nav-item"><a href="{{ url_for('admin_dash') }}" class="nav-link">Admin Dashboard</a></li>
                         {% endif %}
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('blog_catagories') }}">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('profile_page') }}">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Log Out</a></li>
                     {% elif 'user' not in session %}
                     <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">Log In</a></li>

@@ -1,1 +1,51 @@
 <!-- PAGE FOR THE USERS PROFILE -->
+ {% extends "base.html" %}
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title mb-4 text-center">My Profile</h3>
+
+          <!-- Display Current Info -->
+          <div id="view-profile">
+            <p><strong>Username:</strong> {{ user['username'] }}</p>
+            <p><strong>Email:</strong> {{ user['email'] }}</p>
+            <button class="btn btn-primary" onclick="toggleEdit(true)">Edit</button>
+          </div>
+
+          <!-- Edit Form -->
+          <form method="POST" action="{{ url_for('profile_page') }}" id="edit-form" style="display: none;">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-success">Save</button>
+              <button type="button" class="btn btn-secondary" onclick="toggleEdit(false)">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleEdit(show) {
+    document.getElementById('view-profile').style.display = show ? 'none' : 'block';
+    document.getElementById('edit-form').style.display = show ? 'block' : 'none';
+  }
+</script>
+{% endblock %}

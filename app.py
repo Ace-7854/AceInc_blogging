@@ -199,14 +199,27 @@ def blog_catagories():
         categories = cat
     )
 
-# @app.route('/profile_page/<username:str>')
-# def profile(username:str):
-#     if 'user' not in session:
-#         return redirect(url_for('logout'))
-
+@app.route('/profile_page', methods=['GET', 'POST'])
+def profile_page():
+    if 'user' not in session:
+        return redirect(url_for('logout'))
     
+    if request.method == 'POST':
+        new_username = request.form['username']
+        new_email = request.form['email']
 
-#     return render_template('profile_page.html')
+        from custom_modules.mysql_module import MySQLManager
+        db = MySQLManager()
+        db.connect()
+        db.update_user(session['user']['user_id'], new_username, new_email)
+        db.disconnect()
+
+        flash("Profile updated!", "success")
+
+
+    return render_template(
+        'profile_page.html',
+        user = session['user'])
 
 @app.route('/blogs/<string:slug>')
 def blogs(slug:str):
