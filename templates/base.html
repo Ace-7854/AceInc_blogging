@@ -24,6 +24,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a href="https://aceinc.online/index.html" class="nav-link">About Ace</a></li>
                     {% if 'user' is in session %}
                         {% if session['user']['role'] == 'admin' %}
                         <li class="nav-item"><a href="{{ url_for('admin_dash') }}" class="nav-link">Admin Dashboard</a></li>

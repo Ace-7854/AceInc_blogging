@@ -276,6 +276,8 @@ def profile_page():
         db = MySQLManager()
         db.connect()
         db.update_user(session['user']['user_id'], new_username, new_email)
+        session['user']['username'] = new_username
+        session['user']['email'] = new_email
         db.disconnect()
 
         flash("Profile updated!", "success")
