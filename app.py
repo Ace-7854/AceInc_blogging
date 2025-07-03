@@ -9,44 +9,66 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
     if request.method == 'POST':
         username = request.form['username']
         pwrd = request.form['password']
 
         from custom_modules.mysql_module import MySQLManager
-
-        db = MySQLManager()
-        db.connect()
+        try:
+            db = MySQLManager()
+            db.connect()
+        except Exception as e:
+            print(f"Error connecting to the database: {e}")
+            flash("Database connection error. Please try again later.", 'error')
+            return redirect(url_for('login'))
+        finally:
+            if 'user' in session:
+                db.disconnect()
+                return redirect(url_for('logout'))
 
         from custom_modules.utils import is_valid_email
         if is_valid_email(username):
-            user = db.get_user_by_email(username)
+            try:
+                user = db.get_user_by_email(username)
+            except Exception as e:
+                flash("Your email was not found. Please try again with a different email.", 'error')
+                return redirect(url_for('login'))
             if user is None:
-                return "Unregistered email given, please double check the email given or register"
+                # return "Unregistered email given, please double check the email given or register"
+                flash('Unregistered email given, please double check the email given or register', 'error')
+                return redirect(url_for('login'))
             else:
                 session['user'] = user
         else:
-            user = db.get_user_by_username(username)
+            try:
+                user = db.get_user_by_username(username)
+            except Exception as e:
+                flash("Your username was not found. Please try again with a different username.", 'error')
+                return redirect(url_for('login'))
             if user is None:
-                return "Unregistered username given, please double check the username given or register"
+                flash("Unregistered username given, please double check the username given or register")
             else:
                 session['user'] = user
         db.disconnect()
-
-        from custom_modules.security_module import check_pass
-        if check_pass(session['user']['password'], pwrd):
-            session['user']['password'] = None
-            # print(session['user'])
-            return redirect(url_for('blog_catagories'))
-        else:
-            return "Incorrect password given"
+        try:
+            from custom_modules.security_module import check_pass
+            if check_pass(session['user']['password'], pwrd):
+                session['user']['password'] = None
+                # print(session['user'])
+                return redirect(url_for('blog_catagories'))
+            else:
+                flash("Incorrect password given")
+        except Exception as e:
+            print(f"Error during password check: {e}")
+            flash("An error occurred while checking your password. Please try again.", 'error')
     return render_template(
         'login.html'
     )
 
 @app.route('/logout')
 def logout():
-    session.pop('user')
+    session.pop('user', None)
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -70,11 +92,14 @@ def register():
         
         from custom_modules.email_module import EmailManager
         mail = EmailManager()
-        session['code'] = mail.send_confirmation(session['user']['email'])
+        try:
+            session['code'] = mail.send_confirmation(session['user']['email'])
+        except Exception as e:
+            print(f"Error sending confirmation email: {e}")
+            flash("An error occurred while sending the confirmation email. Please try again.", 'error')
+            return redirect(url_for('register'))
 
         return redirect(url_for('email_confirmation'))
-
-
     return render_template(
         'register.html'
     )
@@ -89,10 +114,15 @@ def email_confirmation():
 
         from custom_modules.mysql_module import MySQLManager
         db = MySQLManager()
-        db.connect()
-        user = session['user']
-        db.insert_new_user(user['username'], user['email'], user['pwrd'])
-        db.disconnect()
+        try:
+            db.connect()
+            user = session['user']
+            db.insert_new_user(user['username'], user['email'], user['pwrd'])
+            db.disconnect()
+        except Exception as e:
+            print(f"Error inserting new user: {e}")
+            flash("An error occurred while creating your account. Please try again.", 'error')
+            return redirect(url_for('register'))
 
         flash('Account Successfully Made','success')
         return redirect(url_for('logout'))
@@ -107,15 +137,23 @@ def new_cat():
 
         from custom_modules.mysql_module import MySQLManager
         db = MySQLManager()
-        db.connect()
-        db.insert_new_catagory(cat_name, desc)
-        db.disconnect()
+        try:
+            db.connect()
+            db.insert_new_catagory(cat_name, desc)
+            db.disconnect()
+        except Exception as e:
+            print(f"Error inserting new category: {e}")
+            flash("An error occurred while creating the category. Please try again.", 'error')
+            return redirect(url_for('new_cat'))
 
     return render_template('new_cat.html')
 
 @app.route('/new_post/<int:cat_id>', methods=['POST','GET'])
 def new_post(cat_id:int):
-    if 'user' not in session:
+    try:
+        if 'user' not in session:
+            return redirect(url_for('logout'))
+    except KeyError:
         return redirect(url_for('logout'))
 
     if request.method == 'POST':
@@ -124,28 +162,39 @@ def new_post(cat_id:int):
 
         from custom_modules.mysql_module import MySQLManager
         db = MySQLManager()
-        db.connect()
-        db.insert_new_post(session['user']['user_id'], title, content)
-        post = db.get_post_by_title(title)
-        db.insert_link_cat_post(cat_id, post['post_id'])
-        db.disconnect()
-        
+        try:
+            db.connect()
+            db.insert_new_post(session['user']['user_id'], title, content)
+            post = db.get_post_by_title(title)
+            db.insert_link_cat_post(cat_id, post['post_id'])
+            db.disconnect()
+        except Exception as e:
+            print(f"Error inserting new post: {e}")
+            flash("An error occurred while creating the post. Please try again.", 'error')
+            return redirect(url_for('new_post', cat_id=cat_id))
         return redirect(url_for('blog_catagories'))
 
     return render_template('new_post.html')
 
 @app.route('/view_blog/<string:slug>')
 def view_blog(slug:str):
-    if 'user' not in session:
-        redirect(url_for('logout'))
+    try:
+        if 'user' not in session:
+            return redirect(url_for('logout'))
+    except KeyError:
+        return redirect(url_for('logout'))
 
     from custom_modules.mysql_module import MySQLManager
     db = MySQLManager()
-    db.connect()
-    post = db.get_post_by_slug(slug)
-    comments = db.get_comments_by_post(post['post_id'])
-    db.disconnect()
-
+    try:
+        db.connect()
+        post = db.get_post_by_slug(slug)
+        comments = db.get_comments_by_post(post['post_id'])
+        db.disconnect()
+    except Exception as e:
+        print(f"Error retrieving post or comments: {e}")
+        flash("An error occurred while retrieving the blog post. Please try again later.", 'error')
+        return redirect(url_for('blog_catagories'))
     return render_template(
         'view_blog.html',
         post = post,
@@ -153,7 +202,10 @@ def view_blog(slug:str):
     )
 @app.route('/submit_comment/<int:post_id>', methods=['POST'])
 def submit_comment(post_id):
-    if 'user' not in session:
+    try:
+        if 'user' not in session:
+            return redirect(url_for('logout'))
+    except KeyError:
         return redirect(url_for('logout'))
 
     from custom_modules.mysql_module import MySQLManager
@@ -165,8 +217,14 @@ def submit_comment(post_id):
     content = request.form.get('content')
 
     # Get post slug for redirect (even if comment fails)
-    slug = db.get_post_slug_by_id(post_id)
-
+    try:
+        slug = db.get_post_slug_by_id(post_id)
+    except Exception as e:
+        print(f"Error retrieving post slug: {e}")
+        flash("An error occurred while retrieving the blog post. Please try again later.", 'error')
+        db.disconnect()
+        return redirect(url_for('blog_catagories'))
+    
     if not content.strip():
         flash("Comment cannot be empty.", "warning")
         db.disconnect()
@@ -185,9 +243,12 @@ def submit_comment(post_id):
 
 @app.route('/blog_catagories')
 def blog_catagories():
-    if 'user' not in session:
-        redirect(url_for('logout'))
-
+    try:
+        if 'user' not in session:
+            return redirect(url_for('logout'))
+    except KeyError:
+        return redirect(url_for('logout'))
+    
     from custom_modules.mysql_module import MySQLManager
     db = MySQLManager()
     db.connect()    
@@ -201,7 +262,10 @@ def blog_catagories():
 
 @app.route('/profile_page', methods=['GET', 'POST'])
 def profile_page():
-    if 'user' not in session:
+    try:
+        if 'user' not in session:
+            return redirect(url_for('logout'))
+    except KeyError:
         return redirect(url_for('logout'))
     
     if request.method == 'POST':
@@ -223,7 +287,10 @@ def profile_page():
 
 @app.route('/blogs/<string:slug>')
 def blogs(slug:str):
-    if 'user' not in session:
+    try:
+        if 'user' not in session:
+            return redirect(url_for('logout'))
+    except KeyError:
         return redirect(url_for('logout'))
 
     from custom_modules.mysql_module import MySQLManager
@@ -250,7 +317,10 @@ def blogs(slug:str):
 
 @app.route('/admin_dash')
 def admin_dash():
-    if 'user' not in session and session['user']['role'] != 'admin':
+    try:
+        if 'user' not in session or session['user']['role'] != 'admin':
+            return redirect(url_for('logout'))
+    except KeyError:
         return redirect(url_for('logout'))
 
     return render_template(
@@ -259,7 +329,10 @@ def admin_dash():
 
 @app.route('/user_viewer')
 def user_viewer():
-    if 'user' not in session or session['user']['role'] != 'admin':
+    try:
+        if 'user' not in session or session['user']['role'] != 'admin':
+            return redirect(url_for('logout'))
+    except KeyError:
         return redirect(url_for('logout'))
 
     from custom_modules.mysql_module import MySQLManager
@@ -275,7 +348,10 @@ def user_viewer():
 
 @app.route('/edit_user/<int:id>', methods=['GET', 'POST'])
 def edit_user(id:int):
-    if 'user' not in session or session['user']['role'] != 'admin':
+    try:
+        if 'user' not in session or session['user']['role'] != 'admin':
+            return redirect(url_for('logout'))
+    except KeyError:
         return redirect(url_for('logout'))
 
     from custom_modules.mysql_module import MySQLManager
