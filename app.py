@@ -437,6 +437,23 @@ def reset_password():
 
     return render_template('password_reset.html')
 
+# @app.route('/check_env_vars')
+# def check_env_vars():
+    # try:
+        # from custom_modules.env_module import get_pwrd, get_email, get_sql_config
+        # email = get_email()
+        # pwrd = get_pwrd()
+        # sql_config = get_sql_config()
+        # env = {
+            # 'google_email': email,
+            # 'google_app_pwrd': pwrd
+        # }
+    # except Exception as e:
+        # print(f"Error retrieving environment variables: {e}")
+        # flash("An error occurred while checking environment variables. Please try again.", 'error')
+        # return redirect(url_for('home'))
+# 
+    # return render_template('check_pass.html', email_env=env, sql_config=sql_config)
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000)
