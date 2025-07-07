@@ -89,7 +89,6 @@ def register():
             'pwrd' : pwrd
         }
 
-        
         from custom_modules.email_module import EmailManager
         mail = EmailManager()
         try:
@@ -377,6 +376,66 @@ def edit_user(id:int):
         'edit_user.html',
         user=user
     )
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        
+        from custom_modules.mysql_module import MySQLManager
+        db = MySQLManager()
+        db.connect()
+        
+        user = db.get_user_by_email(email)
+        session['user'] = user
+        if user:
+            from custom_modules.email_module import EmailManager
+            mail = EmailManager()
+            try:
+                code = mail.send_reset_password(email)
+                session['reset_code'] = code
+                session['reset_email'] = email
+                return redirect(url_for('reset_password'))
+            except Exception as e:
+                print(f"Error sending reset email: {e}")
+                flash("An error occurred while sending the reset email. Please try again.", 'error')
+        else:
+            flash("Email not found. Please register first.", 'error')
+        
+        db.disconnect()
+    
+    return render_template('forgot_password.html')
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        code = request.form['code']
+        new_password = request.form['pass']
+        confirm_password = request.form['re-pass']
+
+        if new_password != confirm_password:
+            flash("Passwords do not match.", 'error')
+            return redirect(url_for('reset_password'))
+
+        if int(code) != session['reset_code']:
+            flash("Invalid reset code.", 'error')
+            return redirect(url_for('reset_password'))
+
+        from custom_modules.mysql_module import MySQLManager
+        db = MySQLManager()
+        db.connect()
+
+        try:
+            db.update_user(session['user']['user_id'], password=new_password)
+            flash("Password reset successfully!", 'success')
+            return redirect(url_for('logout'))
+        except Exception as e:
+            print(f"Error resetting password: {e}")
+            flash("An error occurred while resetting your password. Please try again.", 'error')
+        finally:
+            db.disconnect()
+
+    return render_template('password_reset.html')
 
 
 if __name__ == '__main__':

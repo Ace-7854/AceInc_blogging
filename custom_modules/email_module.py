@@ -7,6 +7,20 @@ class EmailManager:
         self.email = get_email()
         self.pwrd = get_pwrd()
 
+    def send_reset_password(self, to_email:str) -> int:
+        import random
+        code = f"{random.randint(0,9)}{random.randint(0,9)}{random.randint(0,9)}{random.randint(0,9)}{random.randint(0,9)}{random.randint(0,9)}"
+        subject = "Ace Incorp' Password Reset"
+        body = f"""Hello,
+        We received a request to reset your password. If you did not make this request, please ignore this email.
+        To reset your password, please go back to browser and enter the code below:
+        {code}
+        If you have any questions, please contact our support team.
+        """.strip()
+        clean_body = '\n'.join(line.strip() for line in body.strip().splitlines())
+        self.__send_email(subject, clean_body, to_email)
+        return int(code)
+
     def send_confirmation(self, to_email:str) -> int:
         import random
         code = f"{random.randint(0,9)}{random.randint(0,9)}{random.randint(0,9)}{random.randint(0,9)}{random.randint(0,9)}{random.randint(0,9)}"
