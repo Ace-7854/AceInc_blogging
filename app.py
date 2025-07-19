@@ -5,6 +5,15 @@ app.secret_key = 'your_secret_key'
 
 @app.route('/')
 def home():
+    
+    from custom_modules.mysql_module import MySQLManager
+    db = MySQLManager()
+    db.connect()
+    if db.connection is None:
+        return render_template('downtime.html')
+    else:
+        db.disconnect()
+
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])

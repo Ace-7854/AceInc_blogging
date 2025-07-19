@@ -277,6 +277,7 @@ class MySQLManager:
                 print("Connected to MySQL database")
         except Error as e:
             print(f"Error connecting to MySQL: {e}")
+            self.connection = None
 
     def disconnect(self):
         if self.connection and self.connection.is_connected():
