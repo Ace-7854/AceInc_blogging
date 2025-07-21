@@ -5,7 +5,6 @@ app.secret_key = 'your_secret_key'
 
 @app.route('/')
 def home():
-    
     from custom_modules.mysql_module import MySQLManager
     db = MySQLManager()
     db.connect()
@@ -396,7 +395,7 @@ def forgot_password():
         db.connect()
         
         user = db.get_user_by_email(email)
-        session['user'] = user
+        session['temp_user'] = user
         if user:
             from custom_modules.email_module import EmailManager
             mail = EmailManager()
@@ -435,11 +434,13 @@ def reset_password():
         db.connect()
 
         try:
-            db.update_user(session['user']['user_id'], password=new_password)
+            db.update_user(session['temp_user']['user_id'], password=new_password)
             flash("Password reset successfully!", 'success')
+            session.pop('temp_user', None)
             return redirect(url_for('logout'))
         except Exception as e:
             print(f"Error resetting password: {e}")
+            session.pop('temp_user', None)
             flash("An error occurred while resetting your password. Please try again.", 'error')
         finally:
             db.disconnect()
