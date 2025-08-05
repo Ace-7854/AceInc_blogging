@@ -447,6 +447,17 @@ def reset_password():
 
     return render_template('password_reset.html')
 
+@app.route('/guest_login')
+def guest_login():
+    session['user'] = {
+        'user_id': 0,
+        'username': 'Guest',
+        'email': '',
+        'role': 'guest',
+        'flag': 0
+    }
+    return redirect(url_for('blog_catagories'))
+
 # @app.route('/check_env_vars')
 # def check_env_vars():
     # try:

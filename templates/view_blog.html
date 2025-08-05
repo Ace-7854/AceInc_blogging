@@ -21,9 +21,17 @@
 
     <!-- Leave a Comment Button -->
     <div class="d-flex justify-content-end mb-4">
+        {% if 'user' in session %}
+            {% if session['user']['role'] != 'guest' %}
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentModal">
             Leave a Comment
         </button>
+            {% else %}
+        <button type="button" class="btn btn-secondary" disabled>
+            Please login to comment
+        </button>
+            {% endif %}
+        {% endif %}
     </div>
 
     <!-- Comments Section -->

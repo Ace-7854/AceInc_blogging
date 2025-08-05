@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container my-5">
     <h2 class="mb-4 text-center">Blogs in "{{ cata['cat_name'] }}"</h2>
-        {% if session['user']['role'] != 'reader' %}
+        {% if session['user']['role'] == 'author' or session['user']['role'] == 'admin' %}
         <a href="{{ url_for('new_post', cat_id = cata['catagory_id']) }}" class="btn btn-primary mb-4">Make New Blog</a>
         {% endif %}
 
