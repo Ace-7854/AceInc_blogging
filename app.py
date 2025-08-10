@@ -458,6 +458,29 @@ def guest_login():
     }
     return redirect(url_for('blog_catagories'))
 
+@app.route('/log_viewer')
+def log_viewer():
+    if 'user' not in session or session['user']['role'] != 'admin':
+        return redirect(url_for('logout'))
+    
+    from custom_modules.mysql_module import MySQLManager
+    db = MySQLManager()
+    try:
+        db.connect()
+        records = db.get_log_records()
+    except Exception as e:
+        print(f"Error retrieving log records: {e}")
+        flash("An error occurred while retrieving log records. Please try again later.", 'error')
+        return redirect(url_for('admin_dash'))
+    finally:
+        db.disconnect()
+
+    return render_template(
+        'log_viewer.html',
+        records=records             
+    )
+
+
 # @app.route('/check_env_vars')
 # def check_env_vars():
     # try:

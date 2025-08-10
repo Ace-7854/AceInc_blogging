@@ -259,6 +259,18 @@ class MySQLManager:
 
         self.__execute_query__(query)
 
+    def __define_logs(self):
+        query = """CREATE TABLE logs_tbl(
+        log_id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
+        user_id INT,
+        title VARCHAR(100),
+        action VARCHAR(255),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES user_tbl(user_id)
+        )"""
+
+        self.__execute_query__(query)
+
     #endregion
 
     #region drop cmds
